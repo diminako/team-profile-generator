@@ -13,11 +13,16 @@ const render = require("./lib/htmlRenderer");
 
 
 
-const questions = [
+inquirer.prompt([
     {
         type: 'input',
         message: 'What is youre name',
         name: 'name'
+    },
+    {
+        type: 'list',
+        message: 'What is your role?',
+        choices: ["Intern", "Engineer", "Manager"]
     },
     {
         type: 'input',
@@ -29,12 +34,15 @@ const questions = [
         message: 'What is your email?',
         name: 'email'
     },
-]
-
-
-inquirer.prompt([
-
-])
+    {
+        type: 'confirm',
+        message: 'Do you wish to add more employees?',
+        name: 'additional'
+    }
+]).then(data => {
+    const rendered = render(data)
+    writeToFile(rendered)
+})
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
@@ -58,3 +66,4 @@ inquirer.prompt([
 // for further information. Be sure to test out each class and verify it generates an
 // object with the correct structure and methods. This structure will be crucial in order
 // for the provided `render` function to work! ```
+
