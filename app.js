@@ -10,40 +10,136 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
-
-
-
-inquirer.prompt([
-    {
-        type: 'input',
-        message: 'What is youre name',
-        name: 'name'
-    },
-    {
-        type: 'list',
-        message: 'What is your role?',
-        choices: ["Intern", "Engineer", "Manager"]
-    },
-    {
-        type: 'input',
-        message: "What is your id?",
-        name: 'id'
-    },
-    {
-        type: 'input',
-        message: 'What is your email?',
-        name: 'email'
-    },
-    {
-        type: 'confirm',
-        message: 'Do you wish to add more employees?',
-        name: 'additional'
+const employeeArr = []
+const renderTeam = () => {
+    if (!fs.existsSync(OUTPUT_DIR)) {
+        fs.mkdirSync(OUTPUT_DIR)
     }
-]).then(data => {
-    const rendered = render(data)
-    writeToFile(rendered)
-})
+    fs.writeFile(outputPath, render(employeeArr), err => {
+        if (err) {
+            return console.log(err);
+        } else {
+            console.log("... writing file")
+        }
 
+    })
+}
+
+const makeEngineer = () => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'What is youre name',
+            name: 'name'
+        },
+        {
+            type: 'input',
+            message: "What is your id?",
+            name: 'id'
+        },
+        {
+            type: 'input',
+            message: 'What is your email?',
+            name: 'email'
+        },
+        {
+            type: 'input',
+            message: 'What is your github?',
+            name: 'github'
+        }
+    ]).then(({ name, id, email, github }) => {
+        const engine = new Engineer(name, id, email, github)
+        employeeArr.push(engine)
+        whatNext()
+    })
+}
+
+const makeIntern = () => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'What is youre name',
+            name: 'name'
+        },
+        {
+            type: 'input',
+            message: "What is your id?",
+            name: 'id'
+        },
+        {
+            type: 'input',
+            message: 'What is your email?',
+            name: 'email'
+        },
+        {
+            type: 'input',
+            message: 'What is your school?',
+            name: 'school'
+        }
+    ]).then(({ name, id, email, school }) => {
+        const intern = new Intern(name, id, email, school)
+        employeeArr.push(intern)
+        whatNext()
+    })
+}
+
+const whatNext = () => {
+    inquirer.prompt([
+        {
+            type: 'list',
+            message: 'What would you like todo?',
+            choices: [
+                { name: 'Make Engineer', value: "engineer" }, { name: 'Make Intern', value: "intern" }, { name: 'Write File', value: "write" }],
+            name: "choice"
+        }
+    ]).then(({ choice }) => {
+        switch (choice) {
+            case "engineer":
+                makeEngineer()
+                break;
+            case "intern":
+                makeIntern()
+                break;
+            default:
+                renderTeam()
+                break;
+        }
+    })
+}
+
+function init() {
+
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'What is youre name',
+            name: 'name'
+        },
+        {
+            type: 'input',
+            message: "What is your id?",
+            name: 'id'
+        },
+        {
+            type: 'input',
+            message: 'What is your email?',
+            name: 'email'
+        },
+        {
+            type: 'input',
+            message: 'What is your office number?',
+            name: 'office'
+        }
+    ]).then(({ name, id, email, office }) => {
+        const manage = new Manager(name, id, email, office)
+        employeeArr.push(manage)
+        whatNext()
+    })
+}
+
+
+
+init()
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
